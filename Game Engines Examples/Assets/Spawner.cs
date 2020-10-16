@@ -6,28 +6,24 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public float radius = 10;
+    public float spawnHeight = 5;
+    public int spawnRate = 1;
+    public int max = 5;
 
-    public int spawnRate = 5;
-
-    public int max = 10;
+    public GameObject enemyPrefab;
+    public float enemyScale = 2.0f;
 
     void Spawn()
     {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.GetComponent<Renderer>().material.color = 
-            Color.HSVToRGB(Random.Range(0.0f, 1.0f), 1, 1);
-        Vector3 pos = new Vector3(Random.Range(-radius, radius), 0, Random.Range(-radius, radius));
+        GameObject enemy = GameObject.Instantiate(enemyPrefab);
+        enemy.transform.localScale = new Vector3(enemyScale, enemyScale, enemyScale);
 
-        cube.AddComponent<Rigidbody>();
-        cube.transform.position = transform.TransformPoint(pos);
+        Vector3 pos = new Vector3(Random.Range(-radius, radius), spawnHeight, Random.Range(-radius, radius));
 
-        cube.transform.parent = this.transform;
-        cube.tag = "Cube";
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Invoke("Spawn", 5);
+        enemy.transform.position = transform.TransformPoint(pos);
+
+        enemy.transform.parent = this.transform;
+        enemy.tag = "Enemy";
     }
 
     void OnEnable()
@@ -35,36 +31,17 @@ public class Spawner : MonoBehaviour
         StartCoroutine(SpawnCoroutine());
     }
 
-    int count = 0;
-
     System.Collections.IEnumerator SpawnCoroutine()
     {
         while(true)
         {
-            Spawn();
-            
-            /*
-            count ++;
-            if (transform.childCount == max)
+            GameObject[] enemies =
+                GameObject.FindGameObjectsWithTag("Enemy");
+            if (enemies.Length < max)
             {
-                break;
-            }
-            */
-            GameObject[] cubes =
-                GameObject.FindGameObjectsWithTag("Cube");
-            if (cubes.Length == max)
-            {
-                break;
+                Spawn();
             }
             yield return new WaitForSeconds(1.0f / (float)spawnRate); 
         }
-    }
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

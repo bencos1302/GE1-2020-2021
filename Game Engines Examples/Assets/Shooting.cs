@@ -27,8 +27,6 @@ public class Shooting : MonoBehaviour
         StartCoroutine(ShootingCoroutine());
     }
 
-    bool shooting = false;
-
     System.Collections.IEnumerator ShootingCoroutine()
     {
         while(true)
